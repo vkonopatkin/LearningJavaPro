@@ -7,7 +7,7 @@ public class StreamExamples {
 
 	public static void main(String[] args) {
 
-		///// Запуск методов /////
+		////// Запуск методов //////
 
 		System.out.println("- 1 -");
 		List<Integer> list1 = new ArrayList<>(List.of(1,1,1,3,2,5,4,1,6,9,7,8,9,0,9));
@@ -57,7 +57,7 @@ public class StreamExamples {
 	}
 
 
-	///// Методы /////
+	////// Методы //////
 
 	// 1. удаление из листа всех дубликатов
 	static List<Integer> m1DelDbl(List<Integer> list){
