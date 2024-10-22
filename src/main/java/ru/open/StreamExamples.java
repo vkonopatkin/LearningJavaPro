@@ -1,7 +1,5 @@
 package ru.open;
 
-import javax.swing.*;
-import java.security.KeyPair;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,13 +7,13 @@ public class StreamExamples {
 
 	public static void main(String[] args) {
 
-		//// Запуск методов
+		///// Запуск методов /////
 
 		System.out.println("- 1 -");
 		List<Integer> list1 = new ArrayList<>(List.of(1,1,1,3,2,5,4,1,6,9,7,8,9,0,9));
 		System.out.println(m1DelDbl(list1));
 
-		System.out.println("\n- 2 -)");
+		System.out.println("\n- 2 -");
 		List<Integer> list2_3 = new ArrayList<>(List.of(5, 2, 10, 9, 4, 3, 10, 1, 13));
 		System.out.println(m2MaxThird(list2_3));
 
@@ -91,7 +89,7 @@ public class StreamExamples {
 	// имен 3 самых старших сотрудников с должностью «Инженер», в порядке убывания возраста
 	static List<Employee> m4EmplOlderEngineer(List<Employee> list){
 		return list.stream()
-				.filter(x -> x.getPosition() == "Инженер")
+				.filter(x -> Objects.equals(x.getPosition(), "Инженер"))
 				.sorted((o1, o2) -> o2.getAge() - o1.getAge()) // лямбдим метод Comparator.compare
 				.limit(3)
 				.toList();
@@ -101,8 +99,8 @@ public class StreamExamples {
 	// необходимо посчитать средний возраст сотрудников с должностью «Инженер»
 	static Double m5EmplEngineerAvgAge(List<Employee> list){
 		return list.stream()
-				.filter(x -> x.getPosition() == "Инженер")
-				.mapToInt(x -> x.getAge())
+				.filter(x -> Objects.equals(x.getPosition(), "Инженер"))
+				.mapToInt(Employee::getAge)
 				.average()
 				.getAsDouble();
 	}
@@ -110,8 +108,7 @@ public class StreamExamples {
 	// 6. Найти в списке слов самое длинное
 	static String m6LongestWord(List<String> list){
 		return list.stream()
-				.sorted((o1, o2) -> o2.length() - o1.length())
-				.findFirst()
+				.min((o1, o2) -> o2.length() - o1.length())
 				.get();
 	}
 
@@ -126,19 +123,18 @@ public class StreamExamples {
 	// если слова имеют одинаковую длины, то должен быть сохранен алфавитный порядок
 	static List<String> m8WordsInOrder(List<String> list){
 		return list.stream()
-				.sorted(Comparator.comparing(x->x.toString().length()).thenComparing(x->x.toString()))
+				.sorted(Comparator.comparing(x->x.toString().length()).thenComparing(Object::toString))
 				.toList();
 	}
 
 	// 9. Имеется массив строк, в каждой из которых лежит набор из 5 строк, разделенных пробелом,
 	// найти среди всех слов самое длинное, если таких слов несколько, получить любое из них
 
-		static String m9LongestWord(String[] strings){
-		return Arrays.stream(strings)
-				.flatMap(x -> Arrays.stream(x.split(" ")))
-				.sorted((o1, o2) -> o2.length() - o1.length())
-				.findFirst()
-				.get();
+	static String m9LongestWord(String[] strings){
+	return Arrays.stream(strings)
+			.flatMap(x -> Arrays.stream(x.split(" ")))
+			.min((o1, o2) -> o2.length() - o1.length())
+			.get();
 	}
 
 }

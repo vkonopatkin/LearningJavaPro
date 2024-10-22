@@ -3,7 +3,7 @@ package ru.open;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.management.ConstructorParameters;
+import java.util.Objects;
 
 @ToString
 public class Employee {
@@ -20,4 +20,15 @@ public class Employee {
 		this.position = position;
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (!(object instanceof Employee employee)) return false;
+		return Objects.equals(name, employee.name) && Objects.equals(age, employee.age) && Objects.equals(position, employee.position);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, age, position);
+	}
 }
