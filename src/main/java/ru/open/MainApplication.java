@@ -28,7 +28,7 @@ public class MainApplication {
 
 		System.out.println("  *** Shutdown ***");
 		threadPoolAlt.shutdown();
-		System.out.println("Попытка запуска задания послел остановки пула");
+		System.out.println("Попытка запуска задания после остановки пула");
 		task = new Task(8);
 		threadPoolAlt.execute(task);
 
