@@ -49,7 +49,7 @@ public class ThreadPoolAlt {
 
 	// Диспетчер - вызывается после выполнения каждого задания
 	// и ставит на выполнение новую задачу из очереди
-	void dispatcher(String threadName){
+	synchronized void dispatcher(String threadName){
 		int i = 0;
 		Iterator iterator = threadList.iterator();
 		while(iterator.hasNext()){
