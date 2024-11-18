@@ -67,7 +67,8 @@ public class ProductDao implements ProductDaoInt {
 				prodTp = ProductType.valueOf(resultSet.getString(5));
 			}
 			catch(IllegalArgumentException ex){
-				throw new Ex400BadRequest("Некорректное значение типа продукта " + resultSet.getString(5));
+				throw new Ex400BadRequest("Некорректное значение типа продукта " + resultSet.getString(5) +
+						" у продукта id = " + resultSet.getLong(1));
 			}
 			allProducts.add(new Product(
 					resultSet.getLong(1),
