@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import ru.open.service.exceptions.Ex400BadRequest;
 import ru.open.service.exceptions.Ex404NotFound;
 
@@ -24,11 +25,19 @@ public class ResponseExceptionHandler {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
+
 	// Для перехвата ошибок при вызове другого REST сервиса в платежном сервисе (передача сообщения об ошибке сквозняком в вызывающий сервис)
+	// при использовании RestTemplate и RestClient
 	@ExceptionHandler(HttpClientErrorException.class)
 	public ResponseEntity handleHttpBadRequest(HttpClientErrorException ex){
 		return new ResponseEntity<>(ex.getResponseBodyAsString(), ex.getStatusCode());
 	}
+	// при использовании WebClient
+	@ExceptionHandler(WebClientResponseException.class)
+	public ResponseEntity handleWebClientBadRequest(WebClientResponseException ex){
+		return new ResponseEntity<>(ex.getResponseBodyAsString(), ex.getStatusCode());
+	}
+
 
 	// Все остальные, результат выдаём в виде простого текста с printStackTrace
 	@ExceptionHandler(Exception.class)

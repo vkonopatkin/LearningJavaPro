@@ -37,7 +37,7 @@ public class ProductService {
 	public double updateProductBalance(long id, double balanceDelta){ // возвращаем баланс после апдейта
 		Product product = findProductById(id);
 		if(product.getBalance() + balanceDelta < 0){
-			throw new Ex400BadRequest("Недостаточный баланс (" + product.getBalance() + " руб) для списания " + (-1 * balanceDelta) + " руб" + id);
+			throw new Ex400BadRequest("Недостаточный баланс (" + product.getBalance() + " руб) для списания " + (-1 * balanceDelta) + " руб");
 		}
 		productDao.updateProductBalance(id, balanceDelta);
 		return product.getBalance() + balanceDelta;

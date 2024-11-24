@@ -1,13 +1,26 @@
 package ru.open.controller;
 
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import ru.open.entities.Payment;
 import ru.open.service.exceptions.Ex400BadRequest;
-
+/*
+4 сервиса:
+ - получение списка продуктов клиента
+ - получение продукта по id
+ - пополнение баланса продукта
+ - списание баланса продукта
+с использованием разных способов обращения к другому REST сервису:
+ - RestTemplate
+ - RestClient
+ - WebClient
+*/
 @RestController
 @RequestMapping(value="/payment/v1") // Начало запроса в адресе (localhist/payment/v1/...)
 public class RestPaymentController {
@@ -109,6 +122,70 @@ public class RestPaymentController {
 				.body(new Payment(id, -debet))
 				.retrieve()
 				.toEntity(String.class);
+		return response;
+	}
+
+	// WebClient --------------------------------
+	@GetMapping("/getAllProductsByUserIdWC") // получение списка продуктов клиента через WebClient
+	public ResponseEntity<Object> getAllProductsByUserIdWC(@RequestParam("userId") int userId){
+		ResponseEntity response;
+		WebClient client = WebClient.builder()
+				.baseUrl(productUrl)
+				.build();
+		Mono<Object> result = client.get()
+				.uri("/getAllProductsByUserId?userId=" + userId)
+				.retrieve()
+				.bodyToMono(Object.class);
+		response = new ResponseEntity<Object>(result.block(), HttpStatus.OK);
+		return response;
+	}
+	@GetMapping("/findProductByIdWC") // получение продукта по id через WebClient
+	public ResponseEntity<Object> findProductByIdWC(@RequestParam("id") int id){
+		ResponseEntity response;
+		WebClient client = WebClient.builder()
+				.baseUrl(productUrl)
+				.build();
+		Mono<Object> result = client.get()
+				.uri("/findProductById?id=" + id)
+				.retrieve()
+				.bodyToMono(Object.class);
+		response = new ResponseEntity<Object>(result.block(), HttpStatus.OK);
+		return response;
+	}
+	@SneakyThrows
+	@PostMapping("/creditBalanceWC") // пополнение баланса продукта через WebClient
+	public ResponseEntity<String> creditBalanceWC(@RequestParam("id") int id, @RequestParam("credit") double credit){
+		if(credit < 0){
+			throw new Ex400BadRequest("Сумма пополнения должна быть положительной!");
+		}
+		ResponseEntity response;
+		WebClient client = WebClient.builder()
+				.baseUrl(productUrl)
+				.build();
+		Mono<String> result = client.post()
+				.uri("/updateProductBalance")
+				.body(Mono.just(new Payment(id, credit)), Payment.class)
+				.retrieve()
+				.bodyToMono(String.class);
+		response = new ResponseEntity<Object>(result.block(), HttpStatus.OK);
+		return response;
+	}
+	@SneakyThrows
+	@PostMapping("/debetBalanceWC") // списание баланса продукта через WebClient
+	public ResponseEntity<String> debetBalanceWC(@RequestParam("id") int id, @RequestParam("debet") double debet){
+		if(debet < 0){
+			throw new Ex400BadRequest("Сумма списания должна быть положительной!");
+		}
+		ResponseEntity response;
+		WebClient client = WebClient.builder()
+				.baseUrl(productUrl)
+				.build();
+		Mono<String> result = client.post()
+				.uri("/updateProductBalance")
+				.body(Mono.just(new Payment(id, -debet)), Payment.class)
+				.retrieve()
+				.bodyToMono(String.class);
+		response = new ResponseEntity<Object>(result.block(), HttpStatus.OK);
 		return response;
 	}
 
