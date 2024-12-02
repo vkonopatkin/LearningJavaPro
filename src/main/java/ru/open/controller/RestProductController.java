@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.open.dto.ProductDto;
 import ru.open.entities.Payment;
 import ru.open.entities.Product;
 import ru.open.entities.User;
@@ -26,7 +27,7 @@ public class RestProductController {
 	}
 
 	@GetMapping("/findUserById")
-	public ResponseEntity<Object> findUserById(@RequestParam("id") int id){
+	public ResponseEntity<Object> findUserById(@RequestParam("id") long id){
 		User user = userService.findUserById(id);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
@@ -38,15 +39,15 @@ public class RestProductController {
 	}
 
 	@GetMapping("/findProductById")
-	public ResponseEntity<Object> findProductById(@RequestParam("id") int id){
+	public ResponseEntity<Object> findProductById(@RequestParam("id") long id){
 		Product product = productService.findProductById(id);
 		return new ResponseEntity<>(product, HttpStatus.OK);
 	}
 
 	@GetMapping("/getAllProductsByUserId")
-	public ResponseEntity<Object> getAllProductsByUserId(@RequestParam("userId") int userId){
-		List<Product> products = productService.getAllProductsByUserId(userId);
-		return new ResponseEntity<>(products, HttpStatus.OK);
+	public ResponseEntity<Object> getAllProductsByUserId(@RequestParam("userId") User userId){
+		List<ProductDto> productsDto = productService.getAllProductsByUserId(userId);
+		return new ResponseEntity<>(productsDto, HttpStatus.OK);
 	}
 
 	@PostMapping("/updateProductBalance")

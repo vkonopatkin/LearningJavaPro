@@ -1,48 +1,55 @@
 package ru.open.entities;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+
+@Entity
+@NoArgsConstructor
+@Table(name = "vk_jp7_products")
 public class Product {
-	private Long id;
+	@Getter
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+
+	@Getter
+	@Column(name = "productname")
 	private String productName;
+
+	@Getter
+	@Column(name = "accnumber")
 	private String accNumber;
+
+	@Getter
+	@Setter
 	private double balance;
-	private ProductType productType;
-	private long userId;
 
-	public Product() {
-	}
+	@Getter
+	@Column(name = "producttype")
+//	private ProductType productType;
+	private String productType;
 
-	public Product(Long id, String productName, String accNumber, double balance, ProductType productType, long userId) {
-		this.id = id;
-		this.productName = productName;
-		this.accNumber = accNumber;
-		this.balance = balance;
-		this.productType = productType;
-		this.userId = userId;
-	}
+	@Getter
+	@ManyToOne
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 
-	public Long getId() {
-		return id;
-	}
+	@JoinColumn(name = "userid")
+	private User userId;
 
-	public String getProductName() {
-		return productName;
-	}
+//	@Column(name = "userid")
+//	private long userId;
 
-	public String getAccNumber() {
-		return accNumber;
-	}
-
-	public double getBalance() {
-		return balance;
-	}
-
-	public ProductType getProductType() {
-		return productType;
-	}
-
-	public long getUserId() {
-		return userId;
-	}
+//	public Product(Long id, String productName, String accNumber, double balance, ProductType productType, long userId) {
+//		this.id = id;
+//		this.productName = productName;
+//		this.accNumber = accNumber;
+//		this.balance = balance;
+//		this.productType = productType;
+//		this.userId = userId;
+//	}
 
 	@Override
 	public String toString() {

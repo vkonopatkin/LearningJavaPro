@@ -1,37 +1,53 @@
 package ru.open.service;
 
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.open.dao.ProductDao;
+import ru.open.dto.ProductDto;
 import ru.open.entities.Product;
+import ru.open.entities.User;
+import ru.open.repository.ProductRepo;
 import ru.open.service.exceptions.Ex400BadRequest;
 import ru.open.service.exceptions.Ex404NotFound;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
 
-	private final ProductDao productDao;
+	@Autowired
+	ProductRepo productRepo;
 
-	public ProductService(ProductDao productDao) {
-		this.productDao = productDao;
-	}
 	@SneakyThrows
 	public Product findProductById(long id) {
-		Product product = productDao.findProductById(id);
-		if(product == null){
+		Optional<Product> productOpt = productRepo.findById(id);
+		if(productOpt.isEmpty()){
 			throw new Ex404NotFound("Не найден продукт id = " + id);
 		}
-		return product;
+		return productOpt.get();
 	}
 	@SneakyThrows
-	public List<Product> getAllProductsByUserId(long userId) {
-		List<Product> allProducts = productDao.getAllProductsByUserId(userId);
+	public List<ProductDto> getAllProductsByUserId(User userId) { // ProductDto - чтобы выводить в результат не всего пользователя, а только userid
+		List<Product> allProducts = productRepo.findByUserId(userId);
 		if(allProducts.isEmpty()){
 			throw new Ex404NotFound("Пустой список продуктов у пользователя userid = " + userId);
 		}
-		return allProducts;
+		List<ProductDto> allProductsDto = new ArrayList<>();
+		Product product;
+		for(int i = 0; i < allProducts.size(); i++){
+			product = allProducts.get(i);
+			allProductsDto.add(new ProductDto(
+					product.getId(),
+					product.getProductName(),
+					product.getAccNumber(),
+					product.getBalance(),
+					product.getProductType(),
+					product.getUserId().getId()
+			));
+		}
+		return allProductsDto;
 	}
 	@SneakyThrows
 	public double updateProductBalance(long id, double balanceDelta){ // возвращаем баланс после апдейта
@@ -39,8 +55,9 @@ public class ProductService {
 		if(product.getBalance() + balanceDelta < 0){
 			throw new Ex400BadRequest("Недостаточный баланс (" + product.getBalance() + " руб) для списания " + (-1 * balanceDelta) + " руб");
 		}
-		productDao.updateProductBalance(id, balanceDelta);
-		return product.getBalance() + balanceDelta;
+		product.setBalance(product.getBalance() + balanceDelta);
+		productRepo.save(product);
+		return product.getBalance();
 	}
 
 }
