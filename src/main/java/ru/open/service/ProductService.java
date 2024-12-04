@@ -29,7 +29,7 @@ public class ProductService {
 		return productOpt.get();
 	}
 	@SneakyThrows
-	public List<ProductDto> getAllProductsByUserId(User userId) { // ProductDto - чтобы выводить в результат не всего пользователя, а только userid
+	public List<ProductDto> getAllProductsByUserId(User userId) { // ProductDto - чтобы выводить в результат запроса не всего пользователя, а только userid
 		List<Product> allProducts = productRepo.findByUserId(userId);
 		if(allProducts.isEmpty()){
 			throw new Ex404NotFound("Пустой список продуктов у пользователя userid = " + userId);
@@ -43,7 +43,7 @@ public class ProductService {
 					product.getProductName(),
 					product.getAccNumber(),
 					product.getBalance(),
-					product.getProductType(),
+					product.getProductType().toString(),
 					product.getUserId().getId()
 			));
 		}

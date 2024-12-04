@@ -1,5 +1,6 @@
 package ru.open.controller.exceptions;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -37,6 +38,13 @@ public class ResponseExceptionHandler {
 	@ExceptionHandler(WebClientResponseException.class)
 	public ResponseEntity handleWebClientBadRequest(WebClientResponseException ex){
 		return new ResponseEntity<>(ex.getResponseBodyAsString(), ex.getStatusCode());
+	}
+
+
+	// Для обработки исключения, вызванного неправильным значением Enum реквизита
+	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
+	public ResponseEntity handleInvalidDataAccess(InvalidDataAccessApiUsageException ex){
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 
 

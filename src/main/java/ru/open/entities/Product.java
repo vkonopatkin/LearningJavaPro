@@ -29,27 +29,14 @@ public class Product {
 
 	@Getter
 	@Column(name = "producttype")
-//	private ProductType productType;
-	private String productType;
+	@Enumerated(EnumType.STRING)
+	private ProductType productType;
 
 	@Getter
 	@ManyToOne
 	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-
 	@JoinColumn(name = "userid")
 	private User userId;
-
-//	@Column(name = "userid")
-//	private long userId;
-
-//	public Product(Long id, String productName, String accNumber, double balance, ProductType productType, long userId) {
-//		this.id = id;
-//		this.productName = productName;
-//		this.accNumber = accNumber;
-//		this.balance = balance;
-//		this.productType = productType;
-//		this.userId = userId;
-//	}
 
 	@Override
 	public String toString() {
