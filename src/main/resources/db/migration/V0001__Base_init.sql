@@ -4,6 +4,7 @@ CREATE TABLE public.user_limit (
 	limit_value numeric(38, 2) NOT NULL
 );
 
+-- В принципе, этого можно не делать, запись для каждого клиента создастся при первом платеже клиента
 INSERT INTO public.user_limit (user_id, limit_value) VALUES
 	 (1, 10000.0),
 	 (2, 10000.0),
